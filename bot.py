@@ -235,7 +235,7 @@ def createFolder():
     folder = cwd + "accounts/" + str(globals['AccountId']) + "/"
     fold_path = os.path.normpath(folder)
     if not os.path.exists(fold_path):
-      os.makedirs(fold_path)
+        os.makedirs(fold_path)
 
 def downloadFiles(megaLogin, images):
     cwd = globals['WorkingDir']
@@ -246,8 +246,11 @@ def downloadFiles(megaLogin, images):
         img_path = os.path.normpath(folder+img_name)
         if not os.path.exists(img_path):
             img_file = megaLogin.find(img_name)
-            print(f" > Downloading {img_name}")
-            megaLogin.download(img_file, folder)
+            try:
+                print(f" > Downloading {img_name}")
+                megaLogin.download(img_file, folder)
+            except:
+                print(f" > Skipping] {img_name}")
         else:
             print(f" > Skipping {img_name}")
     print(f" > Downloading finished for account id [{globals['AccountId']}]")
