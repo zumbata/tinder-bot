@@ -250,7 +250,7 @@ def downloadFiles(megaLogin, images):
                 print(f" > Downloading {img_name}")
                 megaLogin.download(img_file, folder)
             except:
-                print(f" > Skipping] {img_name}")
+                print(f" > Error downloading {img_name}")
         else:
             print(f" > Skipping {img_name}")
     print(f" > Downloading finished for account id [{globals['AccountId']}]")
@@ -347,10 +347,10 @@ def uploadImages(driver):
         time.sleep(2)
 
 def getNumber(driver):
+    phoneNum, actSrc, country = BuyAnyActivation()
     driver.save_screenshot('screen.png')
     print("SS saved")
     return
-    phoneNum, actSrc, country = BuyAnyActivation()
     changeCountryBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[2]/div[2]/div/div[1]")
     changeCountryBtn.click()
     changeCountryInput = waitForItem(driver, By.NAME, "searchQuery")
