@@ -302,7 +302,7 @@ def createDriver():
 
 def findTinderButton(driver):
     selector = "[aria-label='Log in with phone number']"
-    btn = waitForItem(driver, By.CSS_SELECTOR, selector, timeout=7)
+    btn = waitForItem(driver, By.CSS_SELECTOR, selector)
     if btn == None:
         print(" > Tinder Login Button wasn't found. Exitting....")        
         exit(0)
@@ -337,7 +337,7 @@ def uploadImages(driver):
     images = globals['Images'][1:]
     for image in images:
         print(" > Uploading " + image)
-        btn = waitForItem(driver, By.XPATH, '//*[@id="content"]/div/div[1]/div/main/div[1]/div/div/div/div/div[2]/span/button', timeout=10)
+        btn = waitForItem(driver, By.XPATH, '//*[@id="content"]/div/div[1]/div/main/div[1]/div/div/div/div/div[2]/span/button')
         btn.click()
         input_field = waitForItem(driver, By.CSS_SELECTOR, 'input[type="file"]')
         input_field.send_keys(image)
@@ -348,18 +348,18 @@ def uploadImages(driver):
 
 def getNumber(driver):
     phoneNum, actSrc, country = BuyAnyActivation()
-    changeCountryBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[2]/div[2]/div/div[1]", timeout=3)
+    changeCountryBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[2]/div[2]/div/div[1]")
     changeCountryBtn.click()
-    changeCountryInput = waitForItem(driver, By.NAME, "searchQuery", timeout=1)
+    changeCountryInput = waitForItem(driver, By.NAME, "searchQuery")
     changeCountryInput.send_keys(country)
     time.sleep(1)
-    selectCountry = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[2]/div[2]/div[2]/div[1]", timeout=1)
+    selectCountry = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[2]/div[2]/div[2]/div[1]")
     selectCountry.click()
-    phoneInput = waitForItem(driver, By.NAME, "phone_number", timeout=1)
+    phoneInput = waitForItem(driver, By.NAME, "phone_number")
     if actSrc == ActivationService.FiveSim:
         phoneNum = fixNumber(phoneNum, country)
     phoneInput.send_keys(phoneNum)
-    nextBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[2]/button", timeout=3)
+    nextBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[2]/button")
     nextBtn.click()
     print(f" > Sending verification code to phone number '{phoneNum}' from {country}.")
     time.sleep(5)
@@ -370,10 +370,10 @@ def getNumber(driver):
         code = SmspvaGetCode()
     index = 1
     for c in str(code):
-        codeInput = waitForItem(driver, By.XPATH, f"/html/body/div[2]/div/div/div[2]/div[3]/input[{index}]", timeout=1)
+        codeInput = waitForItem(driver, By.XPATH, f"/html/body/div[2]/div/div/div[2]/div[3]/input[{index}]")
         codeInput.send_keys(c)
         index += 1
-    continueBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[2]/button", timeout=1)
+    continueBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[2]/button")
     continueBtn.click()
 
 def completeRegistration(driver):
@@ -381,7 +381,7 @@ def completeRegistration(driver):
     if "Your Account Has Been Banned" in driver.find_element_by_tag_name('body').text:
         print(" > Account got banned.")
         exit(0)
-    emailInput = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[2]/div[2]/input", timeout=15)
+    emailInput = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[2]/div[2]/input")
     if emailInput:
         emailInput.send_keys(globals['AccountInfo'][Columns.TINDER_EMAIL])
     else:
@@ -389,53 +389,53 @@ def completeRegistration(driver):
         exit(0)
     print(" > Entering email, date of birth, name, photo and gender.")
     month, day, year = fixBirthDate(globals['AccountInfo'][Columns.BIRTHDATE])
-    continueBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[2]/div[2]/button", timeout=1)
+    continueBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[2]/div[2]/button")
     continueBtn.click()
-    gotItBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[2]/button", timeout=4)
+    gotItBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[2]/button")
     gotItBtn.click()
-    womanBtn = waitForItem(driver, By.XPATH, "/html/body/div[1]/div/div[1]/div/main/div[1]/div/div/div/form/div[2]/div[2]/div/div/div[1]/button[2]", timeout=1)
+    womanBtn = waitForItem(driver, By.XPATH, "/html/body/div[1]/div/div[1]/div/main/div[1]/div/div/div/form/div[2]/div[2]/div/div/div[1]/button[2]")
     womanBtn.click()
-    nameInput = waitForItem(driver, By.ID, "name", timeout=1)
+    nameInput = waitForItem(driver, By.ID, "name")
     nameInput.send_keys(globals['AccountInfo'][Columns.NAME])
-    monthInput = waitForItem(driver, By.NAME, "month", timeout=1)
-    dayInput = waitForItem(driver, By.NAME, "day", timeout=1)
-    yearInput = waitForItem(driver, By.NAME, "year", timeout=1)
+    monthInput = waitForItem(driver, By.NAME, "month")
+    dayInput = waitForItem(driver, By.NAME, "day")
+    yearInput = waitForItem(driver, By.NAME, "year")
     monthInput.send_keys(month)
     dayInput.send_keys(day)
     yearInput.send_keys(year)
-    photoInput = waitForItem(driver, By.CSS_SELECTOR, 'input[type="file"]', timeout=10)
+    photoInput = waitForItem(driver, By.CSS_SELECTOR, 'input[type="file"]')
     photoInput.send_keys(globals['Images'][0])
     time.sleep(1)
-    chooseBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[2]/div[1]/button[2]", timeout=5)
+    chooseBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[2]/div[1]/button[2]")
     chooseBtn.click()
     time.sleep(3)
-    continueBtnNew = waitForItem(driver, By.XPATH, "/html/body/div[1]/div/div[1]/div/main/div[1]/div/div/div/form/div[5]/button", timeout=1)
+    continueBtnNew = waitForItem(driver, By.XPATH, "/html/body/div[1]/div/div[1]/div/main/div[1]/div/div/div/form/div[5]/button")
     continueBtnNew.click()
     time.sleep(9)
     driver.get("https://tinder.com/app/profile/edit")
     time.sleep(2)
-    coordBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div/div/div[3]/button[1]", timeout=3)
+    coordBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div/div/div[3]/button[1]")
     if coordBtn:
         coordBtn.click()
     time.sleep(0.1)
-    notBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div/div/div[3]/button[2]", timeout=3)
+    notBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div/div/div[3]/button[2]")
     if notBtn:
         notBtn.click()
-    cookieBtn = waitForItem(driver, By.XPATH, "/html/body/div[1]/div/div[2]/div/div/div[1]/div/button", timeout=2)
+    cookieBtn = waitForItem(driver, By.XPATH, "/html/body/div[1]/div/div[2]/div/div/div[1]/div/button")
     if cookieBtn:
         cookieBtn.click()
     time.sleep(0.5)
-    randomPopUpBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[2]/button", timeout=4)
+    randomPopUpBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[2]/button")
     if randomPopUpBtn:
         randomPopUpBtn.click()
     time.sleep(1)
     driver.get("https://tinder.com/app/profile/edit")
     time.sleep(3)
-    bioTextArea = waitForItem(driver, By.XPATH, "/html/body/div[1]/div/div[1]/div/main/div[1]/div/div/div/div/div[2]/div[2]/div/textarea", timeout=10)
+    bioTextArea = waitForItem(driver, By.XPATH, "/html/body/div[1]/div/div[1]/div/main/div[1]/div/div/div/div/div[2]/div[2]/div/textarea")
     bioTextArea.send_keys(globals['AccountInfo'][Columns.TINDER_BIO])
     uploadImages(driver)
     time.sleep(3)
-    saveBtn = waitForItem(driver, By.XPATH, "/html/body/div[1]/div/div[1]/div/main/div[1]/div/div/div/div/div[1]/a", timeout=3)
+    saveBtn = waitForItem(driver, By.XPATH, "/html/body/div[1]/div/div[1]/div/main/div[1]/div/div/div/div/div[1]/a")
     saveBtn.click()
     time.sleep(1)
     print(" > Everything done, captain!")
