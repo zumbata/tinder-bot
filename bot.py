@@ -348,10 +348,9 @@ def uploadImages(driver):
 
 def getNumber(driver):
     phoneNum, actSrc, country = BuyAnyActivation()
+    changeCountryBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[2]/div[2]/div/div[1]")
     driver.save_screenshot('screen.png')
     print("SS saved")
-    return
-    changeCountryBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[2]/div[2]/div/div[1]")
     changeCountryBtn.click()
     changeCountryInput = waitForItem(driver, By.NAME, "searchQuery")
     changeCountryInput.send_keys(country)
