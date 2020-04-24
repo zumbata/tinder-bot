@@ -411,7 +411,7 @@ def completeRegistration(driver):
     chooseBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[1]/div[1]/button[2]")
     chooseBtn.click()
     time.sleep(3)
-    cookieBtn = waitForItem(driver, By.XPATH, "/html/body/div[1]/div/div[2]/div/div/div[1]/div/button")
+    cookieBtn = waitForItem(driver, By.XPATH, "/html/body/div[1]/div/div[2]/div/div/div[1]/button")
     if cookieBtn:
         cookieBtn.click()
     time.sleep(1)
