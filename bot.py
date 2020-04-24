@@ -199,7 +199,7 @@ def waitForItem(driver, selector_type, selector_value, timeout=120):
     try:
         element = WebDriverWait(driver, timeout).until(EC.presence_of_element_located((selector_type, selector_value)))
     except selenium.common.exceptions.TimeoutException:
-        print(" > Timeout error: Element couldn't be located.")
+        print(f" > Timeout error: Element couldn't be located. ({selector_value})")
         return None
     return element
 
@@ -348,20 +348,18 @@ def uploadImages(driver):
 
 def getNumber(driver):
     phoneNum, actSrc, country = BuyAnyActivation()
-    changeCountryBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[2]/div[2]/div/div[1]", timeout=3)
-    if not changeCountryBtn:
-          changeCountryBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[1]/div[2]/div/div[1]", timeout=3)
+    changeCountryBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[1]/div[2]/div/div[1]")
     changeCountryBtn.click()
     changeCountryInput = waitForItem(driver, By.NAME, "searchQuery")
     changeCountryInput.send_keys(country)
     time.sleep(1)
-    selectCountry = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[2]/div[2]/div[2]/div[1]")
+    selectCountry = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[1]/div[2]/div[2]/div/div[1]")
     selectCountry.click()
     phoneInput = waitForItem(driver, By.NAME, "phone_number")
     if actSrc == ActivationService.FiveSim:
         phoneNum = fixNumber(phoneNum, country)
     phoneInput.send_keys(phoneNum)
-    nextBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[2]/button")
+    nextBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[1]/button")
     nextBtn.click()
     print(f" > Sending verification code to phone number '{phoneNum}' from {country}.")
     time.sleep(5)
@@ -372,10 +370,10 @@ def getNumber(driver):
         code = SmspvaGetCode()
     index = 1
     for c in str(code):
-        codeInput = waitForItem(driver, By.XPATH, f"/html/body/div[2]/div/div/div[2]/div[3]/input[{index}]")
+        codeInput = waitForItem(driver, By.XPATH, f"/html/body/div[2]/div/div/div[1]/div[3]/input[{index}]")
         codeInput.send_keys(c)
         index += 1
-    continueBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[2]/button")
+    continueBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[1]/button")
     continueBtn.click()
 
 def completeRegistration(driver):
@@ -383,7 +381,7 @@ def completeRegistration(driver):
     if "Your Account Has Been Banned" in driver.find_element_by_tag_name('body').text:
         print(" > Account got banned.")
         exit(0)
-    emailInput = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[2]/div[2]/input")
+    emailInput = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[1]/div[2]/input")
     if emailInput:
         emailInput.send_keys(globals['AccountInfo'][Columns.TINDER_EMAIL])
     else:
