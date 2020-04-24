@@ -397,6 +397,10 @@ def completeRegistration(driver):
     womanBtn = waitForItem(driver, By.XPATH, "/html/body/div[1]/div/div[1]/div/main/div[1]/div/div/div/form/div[2]/div[2]/div/div/div[1]/button[2]")
     print(womanBtn)
     womanBtn.click()
+    cookieBtn = waitForItem(driver, By.XPATH, "/html/body/div[1]/div/div[2]/div/div/div[1]/button")
+    if cookieBtn:
+        cookieBtn.click()
+    time.sleep(1)
     nameInput = waitForItem(driver, By.ID, "name")
     nameInput.send_keys(globals['AccountInfo'][Columns.NAME])
     monthInput = waitForItem(driver, By.NAME, "month")
@@ -411,11 +415,7 @@ def completeRegistration(driver):
     chooseBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[1]/div[1]/button[2]")
     chooseBtn.click()
     time.sleep(3)
-    cookieBtn = waitForItem(driver, By.XPATH, "/html/body/div[1]/div/div[2]/div/div/div[1]/button")
-    if cookieBtn:
-        cookieBtn.click()
-    time.sleep(1)
-    continueBtnNew = waitForItem(driver, By.XPATH, "/html/body/div[1]/div/div[1]/div/main/div[1]/div/div/div/form/div[5]/button")
+    continueBtnNew = waitForItem(driver, By.CSS_SELECTOR, 'button[type="submit"]')
     driver.save_screenshot("screen3.png")
     continueBtnNew.click()
     time.sleep(9)
