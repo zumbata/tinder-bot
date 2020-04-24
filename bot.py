@@ -1,4 +1,4 @@
-import time, paramiko, openpyxl, sys, requests, json, os, shutil, selenium
+import time, openpyxl, sys, requests, json, os, shutil, selenium
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver import ChromeOptions
