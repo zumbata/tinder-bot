@@ -393,7 +393,7 @@ def completeRegistration(driver):
     continueBtn.click()
     gotItBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[1]/button")
     gotItBtn.click()
-    driver.send_screenshot("screen2.png")
+    driver.save_screenshot("screen2.png")
     womanBtn = waitForItem(driver, By.XPATH, "/html/body/div[1]/div/div[1]/div/main/div[1]/div/div/div/form/div[2]/div[2]/div/div/div[1]/button[2]")
     print(womanBtn)
     womanBtn.click()
