@@ -415,8 +415,11 @@ def completeRegistration(driver):
     chooseBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[1]/div[1]/button[2]")
     chooseBtn.click()
     time.sleep(3)
-    continueBtnNew = waitForItem(driver, By.CSS_SELECTOR, 'button[type="submit"]')
+    continueBtnNew = waitForItem(driver, By.XPATH, "/html/body/div[1]/div/div[1]/div/main/div[1]/div/div/div/form/div[7]/button")
+          
     driver.save_screenshot("screen3.png")
+    if not continueBtnNew:
+        continueBtnNew = waitForItem(driver, By.CSS_SELECTOR, 'button[type="submit"]')
     continueBtnNew.click()
     time.sleep(9)
     driver.get("https://tinder.com/app/profile/edit")
