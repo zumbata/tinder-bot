@@ -195,7 +195,7 @@ def SmspvaGetCode():
             time.sleep(10)
 
 
-def waitForItem(driver, selector_type, selector_value, timeout=120):
+def waitForItem(driver, selector_type, selector_value, timeout=20):
     try:
         element = WebDriverWait(driver, timeout).until(EC.presence_of_element_located((selector_type, selector_value)))
     except selenium.common.exceptions.TimeoutException:
@@ -412,6 +412,7 @@ def completeRegistration(driver):
     chooseBtn.click()
     time.sleep(3)
     continueBtnNew = waitForItem(driver, By.XPATH, "/html/body/div[1]/div/div[1]/div/main/div[1]/div/div/div/form/div[5]/button")
+    driver.save_screenshot("screen3.png")
     continueBtnNew.click()
     time.sleep(9)
     driver.get("https://tinder.com/app/profile/edit")
