@@ -337,12 +337,12 @@ def uploadImages(driver):
     images = globals['Images'][1:]
     for image in images:
         print(" > Uploading " + image)
-        btn = waitForItem(driver, By.XPATH, '//*[@id="content"]/div/div[1]/div/main/div[1]/div/div/div/div/div[2]/span/button')
+        btn = waitForItem(driver, By.XPATH, '/html/body/div[1]/div/div[1]/div/main/div[1]/div/div/div/div/div[2]/span/button')
         btn.click()
         input_field = waitForItem(driver, By.CSS_SELECTOR, 'input[type="file"]')
         input_field.send_keys(image)
         time.sleep(1.5)
-        chooseBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[2]/div[1]/button[2]")
+        chooseBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[1]/div[1]/button[2]")
         chooseBtn.click()
         time.sleep(2)
 
@@ -411,7 +411,7 @@ def completeRegistration(driver):
     yearInput.send_keys(year)
     photoInput = waitForItem(driver, By.CSS_SELECTOR, 'input[type="file"]')
     photoInput.send_keys(globals['Images'][0])
-    time.sleep(1)
+    time.sleep(3)
     chooseBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[1]/div[1]/button[2]")
     chooseBtn.click()
     time.sleep(3)
@@ -438,6 +438,7 @@ def completeRegistration(driver):
     time.sleep(1)
     driver.get("https://tinder.com/app/profile/edit")
     time.sleep(3)
+    driver.save_screenshot("screen4.png")
     bioTextArea = waitForItem(driver, By.XPATH, "/html/body/div[1]/div/div[1]/div/main/div[1]/div/div/div/div/div[2]/div[2]/div/textarea")
     bioTextArea.send_keys(globals['AccountInfo'][Columns.TINDER_BIO])
     uploadImages(driver)
