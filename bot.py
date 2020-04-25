@@ -391,8 +391,11 @@ def completeRegistration(driver):
     month, day, year = fixBirthDate(globals['AccountInfo'][Columns.BIRTHDATE])
     continueBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[1]/div[2]/button")
     continueBtn.click()
-    gotItBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[1]/button")
+    gotItBtn = waitForItem(driver, By.CSS_SELECTOR, "#modal-manager > div > div > div.Ta\(s\).As\(fs\).P\(16px\)--s > button", timeout=3)
+    if not gotItBtn:
+        gotItBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[1]/button")
     gotItBtn.click()
+    time.sleep(1)
     driver.save_screenshot("screen2.png")
     womanBtn = waitForItem(driver, By.XPATH, "/html/body/div[1]/div/div[1]/div/main/div[1]/div/div/div/form/div[2]/div[2]/div/div/div[1]/button[2]")
     print(womanBtn)
