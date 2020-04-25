@@ -428,6 +428,7 @@ def completeRegistration(driver):
     time.sleep(9)
     driver.save_screenshot("screen6.png")
     driver.get("https://tinder.com/app/profile/edit")
+    time.sleep(1)
     driver.save_screenshot("screen7.png")
     time.sleep(2)
     coordBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div/div/div[3]/button[1]", timeout=1)
