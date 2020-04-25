@@ -401,7 +401,6 @@ def completeRegistration(driver):
     time.sleep(1)
     driver.save_screenshot("screen2.png")
     womanBtn = waitForItem(driver, By.XPATH, "/html/body/div[1]/div/div[1]/div/main/div[1]/div/div/div/form/div[2]/div[2]/div/div/div[1]/button[2]")
-    print(womanBtn)
     womanBtn.click()
     cookieBtn = waitForItem(driver, By.XPATH, "/html/body/div[1]/div/div[2]/div/div/div[1]/button")
     if cookieBtn:
@@ -430,15 +429,15 @@ def completeRegistration(driver):
     time.sleep(9)
     driver.get("https://tinder.com/app/profile/edit")
     time.sleep(2)
-    coordBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div/div/div[3]/button[1]")
+    coordBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div/div/div[3]/button[1]", timeout=1)
     if coordBtn:
         coordBtn.click()
     time.sleep(0.1)
-    notBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div/div/div[3]/button[2]")
+    notBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div/div/div[3]/button[2]", timeout=1)
     if notBtn:
         notBtn.click()
     time.sleep(0.5)
-    randomPopUpBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[2]/button")
+    randomPopUpBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[2]/button", timeout=1)
     if randomPopUpBtn:
         randomPopUpBtn.click()
     time.sleep(5)
