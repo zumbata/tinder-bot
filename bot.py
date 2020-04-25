@@ -246,11 +246,14 @@ def downloadFiles(megaLogin, images):
         img_path = os.path.normpath(folder+img_name)
         if not os.path.exists(img_path):
             img_file = megaLogin.find(img_name)
-            try:
-                print(f" > Downloading {img_name}")
-                megaLogin.download(img_file, folder)
-            except:
-                print(f" > Error downloading {img_name}")
+            image_downloaded = False
+            while not image_downloaded:
+                try:
+                    print(f" > Downloading {img_name}")
+                    megaLogin.download(img_file, folder)
+                    image_downloaded = True
+                except:
+                    print(f" > Error downloading {img_name}")
         else:
             print(f" > Skipping {img_name}")
     print(f" > Downloading finished for account id [{globals['AccountId']}]")
