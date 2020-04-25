@@ -425,7 +425,7 @@ def completeRegistration(driver):
     if not continueBtnNew:
         continueBtnNew = waitForItem(driver, By.CSS_SELECTOR, 'button[type="submit"]', timeout=3)
     continueBtnNew.click()
-    time.sleep(9)
+    time.sleep(15)
     driver.save_screenshot("screen6.png")
     driver.get("https://tinder.com/app/profile/edit")
     time.sleep(1)
