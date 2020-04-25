@@ -435,10 +435,11 @@ def completeRegistration(driver):
     randomPopUpBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[2]/button")
     if randomPopUpBtn:
         randomPopUpBtn.click()
-    time.sleep(1)
+    time.sleep(5)
+    driver.save_screenshot("screen4.png")
     driver.get("https://tinder.com/app/profile/edit")
     time.sleep(3)
-    driver.save_screenshot("screen4.png")
+    driver.save_screenshot("screen5.png")
     bioTextArea = waitForItem(driver, By.XPATH, "/html/body/div[1]/div/div[1]/div/main/div[1]/div/div/div/div/div[2]/div[2]/div/textarea")
     bioTextArea.send_keys(globals['AccountInfo'][Columns.TINDER_BIO])
     uploadImages(driver)
