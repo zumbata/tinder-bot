@@ -294,10 +294,9 @@ def createDriver():
         """
     })
     try:
-        driver.execute_cdp_cmd("Page.setGeolocationOverride", globals['DriverLocation'])
-    except:
-        print(globals['ChromeDriverLocation'])
         driver.execute(Command.SET_LOCATION, globals['ChromeDriverLocation'])
+    except:
+        driver.execute_cdp_cmd("Page.setGeolocationOverride", globals['DriverLocation'])
     # print(" > Headless Chrome Initialized. Updating window size...")
     # driver.set_window_size(1920, 1080)
     # print(" > Headless Chrome is ready to rock!!!")
