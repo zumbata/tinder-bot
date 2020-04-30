@@ -125,7 +125,7 @@ def FiveSimGetCode():
 def BuyAnyActivation():
     country = ""
     requests_made = 1
-    first_api = False
+    first_api = True
     phone = None
     while not phone:
         if first_api:
