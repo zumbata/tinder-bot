@@ -466,7 +466,10 @@ def adjustCoords():
     global globals
     coords = globals['AccountInfo'][Columns.COORDINATES]
     coords = coords.split(' ')
-    coords = [ x[:-2] for x in coords ]
+    coord_one = coords[0][:-2] if coords[0][-1] == "N" else "-"+coords[0][:-2]
+    coord_two = coords[1][:-2] if coords[1][-1] == "E" else "-"+coords[1][:-2]
+    coords = [coord_one, coord_two]
+          
     params = {
         "latitude": float(coords[0]),
         "longitude": float(coords[1]),
