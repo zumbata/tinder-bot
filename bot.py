@@ -425,7 +425,8 @@ def completeRegistration(driver):
     time.sleep(30)
     if "Verification" in driver.find_element_by_tag_name('body').text:
         print(" > Captcha required. Exitting...")
-        exit(0)         
+        exit(0)
+    driver.save_screenshot('123.png')
     print(" > Redirecting...")
     driver.get("https://tinder.com/app/profile/edit")
     time.sleep(5)
