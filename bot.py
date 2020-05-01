@@ -414,12 +414,11 @@ def completeRegistration(driver):
     gotItBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[1]/button", timeout=4)
     if not gotItBtn:
         gotItBtn = waitForItem(driver, By.CSS_SELECTOR, r"#modal-manager > div > div > div.Ta\(s\).As\(fs\).P\(16px\)--s > button", timeout=3)
+    driver.save_screenshot("321.png")
     gotItBtn.click()
     time.sleep(3)
-    driver.save_screenshot("321.png")
     womanBtn = waitForItem(driver, By.XPATH, "/html/body/div[1]/div/div[1]/div/main/div[1]/div/div/div/form/div[2]/div[2]/div/div/div[1]/button[2]")
     womanBtn.click()
-    
     time.sleep(1)
     nameInput = waitForItem(driver, By.ID, "name")
     nameInput.send_keys(globals['AccountInfo'][Columns.NAME])
