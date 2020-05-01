@@ -415,7 +415,11 @@ def completeRegistration(driver):
     if not gotItBtn:
         gotItBtn = waitForItem(driver, By.CSS_SELECTOR, r"#modal-manager > div > div > div.Ta\(s\).As\(fs\).P\(16px\)--s > button", timeout=3)
     driver.save_screenshot("321.png")
-    gotItBtn.click()
+    try:
+        gotItBtn.click()
+    except:
+          print(" > Account got banned. Exiting...")
+          exit(0)
     time.sleep(3)
     womanBtn = waitForItem(driver, By.XPATH, "/html/body/div[1]/div/div[1]/div/main/div[1]/div/div/div/form/div[2]/div[2]/div/div/div[1]/button[2]")
     womanBtn.click()
