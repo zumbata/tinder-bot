@@ -8,6 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.remote.command import Command
 from enum import Enum
 from mega import Mega
+import threading
 from pyvirtualdisplay import Display
 
 globals = {}
@@ -237,25 +238,38 @@ def createFolder():
     if not os.path.exists(fold_path):
         os.makedirs(fold_path)
 
+def AsyncDownloadImage(megaLogin, folder, img_file):
+    image_downloaded = False
+    img_name = img_file[1]['a']['n']
+    while not image_downloaded:
+        try:
+            print(f" > Downloading {img_name}")
+            megaLogin.download(img_file, folder)
+            image_downloaded = True
+        except Exception as e:
+            print(f" > Error downloading {img_name} [{str(e)}]")
+
 def downloadFiles(megaLogin, images):
     cwd = globals['WorkingDir']
     folder = cwd + "accounts/" + str(globals['AccountId']) + "/"
     files = megaLogin.get_files()
+    img_files = []
     for image in images:
         img_name = files[image]['a']['n']
         img_path = os.path.normpath(folder+img_name)
         if not os.path.exists(img_path):
             img_file = megaLogin.find(img_name)
-            image_downloaded = False
-            while not image_downloaded:
-                try:
-                    print(f" > Downloading {img_name}")
-                    megaLogin.download(img_file, folder)
-                    image_downloaded = True
-                except:
-                    print(f" > Error downloading {img_name}")
+            img_files.append(img_file)
         else:
             print(f" > Skipping {img_name}")
+    threads = []
+    for img_file in img_files:
+            thread = threading.Thread(target=AsyncDownloadImage, args=(megaLogin, folder, img_file))
+            threads.append(thread)
+    for thread in threads:
+            thread.start()
+    for thread in threads:
+            thread.join()
     print(f" > Downloading finished for account id [{globals['AccountId']}]")
 
 def fixFolders():
@@ -364,7 +378,7 @@ def getNumber(driver):
     nextBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[1]/button")
     nextBtn.click()
     print(f" > Sending verification code to phone number '{phoneNum}' from {country}.")
-    time.sleep(5)
+    time.sleep(10)
     code = None
     if actSrc == ActivationService.FiveSim:
         code = FiveSimGetCode()
@@ -383,7 +397,7 @@ def completeRegistration(driver):
     if "Your Account Has Been Banned" in driver.find_element_by_tag_name('body').text:
         print(" > Account got banned.")
         exit(0)
-    emailInput = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[1]/div[2]/input")
+    emailInput = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[1]/div[2]/input", timeout=5)
     if emailInput:
         emailInput.send_keys(globals['AccountInfo'][Columns.TINDER_EMAIL])
     else:
@@ -399,7 +413,7 @@ def completeRegistration(driver):
         cookieBtn.click()
     gotItBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[1]/button", timeout=4)
     if not gotItBtn:
-        gotItBtn = waitForItem(driver, By.CSS_SELECTOR, "#modal-manager > div > div > div.Ta\(s\).As\(fs\).P\(16px\)--s > button", timeout=3)
+        gotItBtn = waitForItem(driver, By.CSS_SELECTOR, r"#modal-manager > div > div > div.Ta\(s\).As\(fs\).P\(16px\)--s > button", timeout=3)
     gotItBtn.click()
     time.sleep(3)
     driver.save_screenshot("321.png")
@@ -523,12 +537,12 @@ def main(args):
     adjustCoords()
     downloadMegaImages()
     fillImages(globals['AccountId'])
-    display = createDisplay()
+    #display = createDisplay()
     driver = createDriver()
     openTinder(driver)
     time.sleep(5)
     driver.quit()
-    display.stop()
+    #display.stop()
     print(" > JOB DONE. GOODBYE, WORLD!")
 
 main(sys.argv)
