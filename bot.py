@@ -408,6 +408,9 @@ def completeRegistration(driver):
     continueBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[1]/div[2]/button")
     continueBtn.click()
     time.sleep(2)
+    if "Your Account Has Been Banned" in driver.find_element_by_tag_name('body').text:
+        print(" > Account got banned.")
+        exit(0)
     cookieBtn = waitForItem(driver, By.XPATH, "/html/body/div[1]/div/div[2]/div/div/div[1]/button")
     if cookieBtn:
         cookieBtn.click()
@@ -418,7 +421,7 @@ def completeRegistration(driver):
     try:
         gotItBtn.click()
     except:
-          print(" > Account got banned. Exiting...")
+          print(" > Account got banned. ")
           exit(0)
     time.sleep(3)
     womanBtn = waitForItem(driver, By.XPATH, "/html/body/div[1]/div/div[1]/div/main/div[1]/div/div/div/form/div[2]/div[2]/div/div/div[1]/button[2]")
