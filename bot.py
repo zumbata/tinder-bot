@@ -148,7 +148,7 @@ def BuyAnyActivation():
                 print(f"[SmsPva #{requests_made}] > There were no free phones, retrying...")
             
         if(requests_made % 100 == 0):
-            # first_api = not first_api
+            first_api = not first_api
             curr_api = "FiveSim" if first_api else "SmsPva"
             print(f" > Switched to " + curr_api + " API")
         requests_made += 1
