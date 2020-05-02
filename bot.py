@@ -526,7 +526,7 @@ def downloadMegaImages():
         files = m.get_files()
     except:
         print(" > Problems with MEGA. Try again after a minute.")
-          exit(1)
+        exit(1)
     folder = None
     images = []
     for file in files:
