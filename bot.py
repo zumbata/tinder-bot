@@ -117,11 +117,11 @@ def FiveSimGetCode():
             return sms
         else:
             tries += 1
-            if tries == 6:
+            if tries == 10:
                 print("[FiveSim API] > No SMS received, exitting...")
                 exit(0)
             print("[FiveSim API] > There is no SMS, retrying...")
-            time.sleep(10)
+            time.sleep(15)
 
 def BuyAnyActivation():
     country = ""
@@ -189,11 +189,11 @@ def SmspvaGetCode():
             return sms
         elif data['response'] == '2':
             tries += 1
-            if tries == 6:
+            if tries == 10:
                 print("[SmsPva API] > No SMS received, exitting...")
                 exit(0)
             print("[SmsPva API] > There is no SMS, retrying...")
-            time.sleep(10)
+            time.sleep(15)
 
 
 def waitForItem(driver, selector_type, selector_value, timeout=20):
