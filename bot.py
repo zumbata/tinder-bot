@@ -395,7 +395,7 @@ def getNumber(driver):
 def completeRegistration(driver):
     time.sleep(1)
     if "Your Account Has Been Banned" in driver.find_element_by_tag_name('body').text:
-        print(" > Account got banned.")
+        print(" > Account got banned because of already used or bad phone.")
         exit(0)
     emailInput = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[1]/div[2]/input", timeout=5)
     if emailInput:
@@ -409,7 +409,7 @@ def completeRegistration(driver):
     continueBtn.click()
     time.sleep(2)
     if "Your Account Has Been Banned" in driver.find_element_by_tag_name('body').text:
-        print(" > Account got banned.")
+        print(" > Account got banned because of already used email.")
         exit(0)
     cookieBtn = waitForItem(driver, By.XPATH, "/html/body/div[1]/div/div[2]/div/div/div[1]/button")
     if cookieBtn:
