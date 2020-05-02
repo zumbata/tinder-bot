@@ -354,6 +354,7 @@ def uploadImages(driver):
     for image in images:
         print(" > Uploading " + image)
         btn = waitForItem(driver, By.XPATH, '/html/body/div[1]/div/div[1]/div/main/div[1]/div/div/div/div/div[2]/span/button')
+        driver.save_screenshot('234.png')
         btn.click()
         input_field = waitForItem(driver, By.CSS_SELECTOR, 'input[type="file"]')
         input_field.send_keys(image)
