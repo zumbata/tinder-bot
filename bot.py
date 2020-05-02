@@ -398,6 +398,7 @@ def completeRegistration(driver):
     if "Your Account Has Been Banned" in driver.find_element_by_tag_name('body').text:
         print(" > Account got banned because of already used or bad phone.")
         exit(0)
+    driver.save_screenshot("567.png")
     emailInput = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[1]/div[2]/input", timeout=5)
     if emailInput:
         emailInput.send_keys(globals['AccountInfo'][Columns.TINDER_EMAIL])
