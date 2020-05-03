@@ -1,13 +1,3 @@
 accounts/*
 debug.log
 accounts
-.bash_logout
-.bashrc
-.cache/
-.cache/*
-.local/
-.local/*
-.profile
-.ssh/
-.ssh/*
-.sudo_as_admin_successful
