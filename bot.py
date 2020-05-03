@@ -349,16 +349,23 @@ def fixBirthDate(date):
     year = dates[2]
     return month, day, year
 
+def searchNoThxBtn(driver):
+    noThxBtn = waitForItem(driver, By.XPATH, "//a[contains(text(),'No Thanks')]", timeout=2)
+    if noThxBtn:
+        print(" > Found 'No Thanks' button, clicking...')
+        noThxBtn.click()     
+          
 def uploadImages(driver):
     images = globals['Images'][1:]
     for image in images:
         print(" > Uploading " + image)
+        searchNoThxBtn(driver)
         btn = waitForItem(driver, By.XPATH, '/html/body/div[1]/div/div[1]/div/main/div[1]/div/div/div/div/div[2]/span/button')
         driver.save_screenshot('234.png')
         btn.click()
         input_field = waitForItem(driver, By.CSS_SELECTOR, 'input[type="file"]')
         input_field.send_keys(image)
-        time.sleep(1.5)
+        searchNoThxBtn(driver)
         chooseBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[1]/div[1]/button[2]")
         chooseBtn.click()
         time.sleep(2)
