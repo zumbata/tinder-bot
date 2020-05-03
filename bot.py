@@ -196,11 +196,12 @@ def SmspvaGetCode():
             time.sleep(15)
 
 
-def waitForItem(driver, selector_type, selector_value, timeout=20):
+def waitForItem(driver, selector_type, selector_value, timeout=20, debug=True):
     try:
         element = WebDriverWait(driver, timeout).until(EC.presence_of_element_located((selector_type, selector_value)))
     except selenium.common.exceptions.TimeoutException:
-        print(f" > Timeout error: Element couldn't be located. ({selector_value})")
+        if debug:
+            print(f" > Timeout error: Element couldn't be located. ({selector_value})")
         return None
     return element
 
@@ -350,7 +351,7 @@ def fixBirthDate(date):
     return month, day, year
 
 def searchNoThxBtn(driver):
-    noThxBtn = waitForItem(driver, By.XPATH, "//a[contains(text(),'No Thanks')]", timeout=2)
+    noThxBtn = waitForItem(driver, By.XPATH, "//a[contains(text(),'No Thanks')]", timeout=2, debug=False)
     if noThxBtn:
         print(" > Found 'No Thanks' button, clicking...")
         noThxBtn.click()     
@@ -483,8 +484,13 @@ def completeRegistration(driver):
     saveBtn = waitForItem(driver, By.XPATH, "/html/body/div[1]/div/div[1]/div/main/div[1]/div/div/div/div/div[1]/a")
     saveBtn.click()
     time.sleep(1)
-    print(" > Everything done, captain!")
-
+    print(" > Everything done, captain! Redirecting to main page now.")
+    backBtnNew = waitForItem(driver, By.CSS_SELECTOR, 'a[href="/app/recs"]', timeout=3)
+    if backBtnNew:
+        backBtnNew.click()
+    else:
+        print(" > Back button couldn't be located.")
+          
 def openTinder(driver):
     driver.execute_script("window.open('about:blank', 'tinderTab');")
     driver.switch_to.window("tinderTab")
