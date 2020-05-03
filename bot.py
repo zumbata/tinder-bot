@@ -537,8 +537,8 @@ def adjustCoords():
 def downloadMegaImages():
     email = globals['AccountInfo'][Columns.MEGA_EMAIL]
     password = globals['AccountInfo'][Columns.MEGA_PASSWORD]
-    m = globals['MegaInstance'].login(email, password)
     try:
+        m = globals['MegaInstance'].login(email, password)
         files = m.get_files()
     except:
         print(" > Problems with MEGA. Try again after a minute.")
