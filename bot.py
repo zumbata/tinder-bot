@@ -352,7 +352,7 @@ def fixBirthDate(date):
 def searchNoThxBtn(driver):
     noThxBtn = waitForItem(driver, By.XPATH, "//a[contains(text(),'No Thanks')]", timeout=2)
     if noThxBtn:
-        print(" > Found 'No Thanks' button, clicking...')
+        print(" > Found 'No Thanks' button, clicking...")
         noThxBtn.click()     
           
 def uploadImages(driver):
