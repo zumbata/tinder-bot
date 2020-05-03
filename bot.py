@@ -22,6 +22,8 @@ globals['WorkingDir'] = os.getcwd() + "/"
 globals['OrderId'] = None
 globals['ActivationService'] = None
 globals['Images'] = []
+display = None
+driver = None
 
 FIVESIMAPI = {}
 FIVESIMAPI['Key'] = "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MTYyNjUwMDksImlhdCI6MTU4NDcyOTAwOSwicmF5IjoiZDE3YzIyN2U3YmQzYTk3Y2NkODkzYWI5ZjQwODNjMGMiLCJzdWIiOjMwODU3OH0.JtyzeAzHp6xdHo2hyTGGjWDtfW-dinSlhlLf5Cvw0OcENTGZFgMiNO_CzqWZDZadJgY_uOvgpyJsa42ce_-16tHkoY3v1IeYZwaUwGTdE9UlOE94qwV9G5af3ADVMEcRgeP_Zs26vfGrKaIweMGDNub_dsD6N23anJuJzk-QFjyvnUpIdbDNOQIMWsb-q3aqtOOmYVyjre4NxDjXEYQT13Cep6ZqTcYl_NDXJjd0cpBub-EzOxcOmcbhXAq23zOf8MyaEqoe7cH2xe6QtbdUGjih1VFqed2cAKHitwou1nYaJCuDDuWPe34kgkyOoOC0MxSadzQBalJqi_wpGcKs0A"
@@ -119,7 +121,7 @@ def FiveSimGetCode():
             tries += 1
             if tries == 10:
                 print("[FiveSim API] > No SMS received, exitting...")
-                exit(0)
+                custom_exit()
             print("[FiveSim API] > There is no SMS, retrying...")
             time.sleep(15)
 
@@ -191,7 +193,7 @@ def SmspvaGetCode():
             tries += 1
             if tries == 10:
                 print("[SmsPva API] > No SMS received, exitting...")
-                exit(0)
+                custom_exit()
             print("[SmsPva API] > There is no SMS, retrying...")
             time.sleep(15)
 
@@ -210,7 +212,7 @@ def setAccountId(args):
     try:
         accId = int(args[1])
     except:
-        exit(0)
+        custom_exit()
     globals['AccountId'] = accId
     print(f" > Updated Account Id [{accId}]")
     
@@ -322,7 +324,7 @@ def findTinderButton(driver):
     btn = waitForItem(driver, By.CSS_SELECTOR, selector)
     if btn == None:
         print(" > Tinder Login Button wasn't found. Exitting....")        
-        exit(0)
+        custom_exit()
     return btn
 
 def fixNumber(phoneNum, country):
@@ -405,14 +407,14 @@ def completeRegistration(driver):
     time.sleep(1)
     if "Your Account Has Been Banned" in driver.find_element_by_tag_name('body').text:
         print(" > Account got banned because of already used or bad phone.")
-        exit(0)
+        custom_exit()
     driver.save_screenshot("567.png")
     emailInput = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[1]/div[2]/input", timeout=5)
     if emailInput:
         emailInput.send_keys(globals['AccountInfo'][Columns.TINDER_EMAIL])
     else:
         print(" > Email field couldn't be found! Maybe account already exists?")
-        exit(0)
+        custom_exit()
     print(" > Entering email, date of birth, name, photo and gender.")
     month, day, year = fixBirthDate(globals['AccountInfo'][Columns.BIRTHDATE])
     continueBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[1]/div[2]/button")
@@ -420,7 +422,7 @@ def completeRegistration(driver):
     time.sleep(2)
     if "Your Account Has Been Banned" in driver.find_element_by_tag_name('body').text:
         print(" > Account got banned because of already used email.")
-        exit(0)
+        custom_exit()
     cookieBtn = waitForItem(driver, By.XPATH, "/html/body/div[1]/div/div[2]/div/div/div[1]/button")
     if cookieBtn:
         cookieBtn.click()
@@ -432,7 +434,7 @@ def completeRegistration(driver):
         gotItBtn.click()
     except:
           print(" > Account got banned. ")
-          exit(0)
+          custom_exit()
     time.sleep(3)
     womanBtn = waitForItem(driver, By.XPATH, "/html/body/div[1]/div/div[1]/div/main/div[1]/div/div/div/form/div[2]/div[2]/div/div/div[1]/button[2]")
     womanBtn.click()
@@ -465,7 +467,7 @@ def completeRegistration(driver):
         coordBtn.click()
     else:
         print(" > Captcha required. Exitting...")
-        exit(0)
+        custom_exit()
     time.sleep(0.1)
     notBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div/div/div[3]/button[2]", timeout=1)
     if notBtn:
@@ -539,7 +541,7 @@ def downloadMegaImages():
         files = m.get_files()
     except:
         print(" > Problems with MEGA. Try again after a minute.")
-        exit(1)
+        custom_exit()
     folder = None
     images = []
     for file in files:
@@ -550,12 +552,25 @@ def downloadMegaImages():
             break
     if folder == None:
         print(f" > No photos for account #{globals['AccountId']}")
-        exit(0)
+        custom_exit()
     images = m.get_files_in_node(folder)
     createFolder()
     downloadFiles(m, images)
 
+def custom_exit():
+    global driver, display
+    try:
+        driver.quit()
+    except:
+        pass
+    try:
+        display.stop()
+    except:
+        pass
+    exit(0)
+
 def main(args):
+    global display, driver
     fixFolders()
     setAccountId(args)
     readExcel()
