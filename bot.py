@@ -456,19 +456,16 @@ def completeRegistration(driver):
         continueBtnNew = waitForItem(driver, By.CSS_SELECTOR, 'button[type="submit"]', timeout=3)
     continueBtnNew.click()
     time.sleep(30)
-    if "Verification" in driver.find_element_by_tag_name('body').text or "verification" in driver.find_element_by_tag_name('body').text:
-        print(" > Captcha required. Exitting...")
-        exit(0)
     driver.save_screenshot('123.png')
     print(" > Redirecting...")
     driver.get("https://tinder.com/app/profile/edit")
     time.sleep(5)
-    if "Verification" in driver.find_element_by_tag_name('body').text or "verification" in driver.find_element_by_tag_name('body').text:
-        print(" > Captcha required. Exitting...")
-        exit(0)
     coordBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div/div/div[3]/button[1]", timeout=1)
     if coordBtn:
         coordBtn.click()
+    else:
+        print(" > Captcha required. Exitting...")
+        exit(0)
     time.sleep(0.1)
     notBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div/div/div[3]/button[2]", timeout=1)
     if notBtn:
