@@ -566,7 +566,7 @@ def main(args):
     driver = createDriver()
     openTinder(driver)
     time.sleep(180)
-    driver.save_screenshot("final.png")
+    driver.save_screenshot(f"final_{args[1]}.png")
     driver.quit()
     display.stop()
     print(" > JOB DONE. GOODBYE, WORLD!")
