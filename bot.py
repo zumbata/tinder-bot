@@ -61,7 +61,7 @@ class Columns(int):
 def CaptchaSolver(url, publicKey):
     solver = funcaptchaProxyless()
     solver.set_verbose(1)
-    solver.set_key("YOUR_KEY")
+    solver.set_key(ANTICAPTCHA['Key'])
     solver.set_website_url(url)
     solver.set_website_key(publicKey)
 
@@ -157,7 +157,7 @@ def FiveSimGetCode():
 def BuyAnyActivation():
     country = ""
     requests_made = 1
-    first_api = False
+    first_api = True
     phone = None
     while not phone:
         if first_api:
@@ -352,9 +352,9 @@ def clickTinderButton(driver):
     selector = "[aria-label='Log in with phone number']"
     btn = waitForItem(driver, By.CSS_SELECTOR, selector)
     if btn == None:
-        print(" > Tinder Login Button wasn't found. Exitting....")        
+        print(" > Tinder Login Button wasn't found. Exitting....")
         custom_exit()
-    btn.click()
+    driver.execute_script("arguments[0].click();", btn)
 
 def fixNumber(phoneNum, country):
     phoneNum = phoneNum[1:]
@@ -438,7 +438,7 @@ def completeRegistration(driver):
         print(" > Account got banned because of already used or bad phone.")
         custom_exit()
     driver.save_screenshot("567.png")
-    emailInput = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[1]/div[2]/input", timeout=5)
+    emailInput = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[1]/div[2]/input", timeout=15)
     if emailInput:
         emailInput.send_keys(globals['AccountInfo'][Columns.TINDER_EMAIL])
     else:
@@ -503,7 +503,7 @@ def completeRegistration(driver):
                 publicKey = GetPublicKey(verificationInput.get_attribute("value"))
                 print(' > Started solving captcha.')
                 token = CaptchaSolver(captchaUrl, publicKey)
-                print(' > Captcha solved by someone Now trying to validate it in the browser.')
+                print(' > Captcha solved by someone. Now trying to validate it in the browser.')
                 driver.execute_script(f"arguments[0].value = '{token}';", verificationInput)
                 driver.execute_script(f"arguments[0].value = '{token}';", funCaptchaInput)
                 driver.switch_to.frame(third_iframe)
@@ -550,7 +550,7 @@ def openTinder(driver):
     driver.execute_script("window.open('about:blank', 'tinderTab');")
     driver.switch_to.window("tinderTab")
     driver.get("https://tinder.com?lang=en-GB")
-    time.sleep(5)
+    time.sleep(6)
     clickTinderButton(driver)
     getNumber(driver)
     completeRegistration(driver)
