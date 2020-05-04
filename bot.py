@@ -348,13 +348,13 @@ def createDriver():
     # print(" > Headless Chrome is ready to rock!!!")
     return driver
 
-def findTinderButton(driver):
+def clickTinderButton(driver):
     selector = "[aria-label='Log in with phone number']"
     btn = waitForItem(driver, By.CSS_SELECTOR, selector)
     if btn == None:
         print(" > Tinder Login Button wasn't found. Exitting....")        
         custom_exit()
-    return btn
+    btn.click()
 
 def fixNumber(phoneNum, country):
     phoneNum = phoneNum[1:]
@@ -498,15 +498,18 @@ def completeRegistration(driver):
             third_iframe = waitForItem(driver, By.ID, "fc-iframe-wrap", timeout=10, debug=False)
             if third_iframe:
                 captchaUrl = third_iframe.get_attribute("src")
-                driver.switch_to.frame(third_iframe)
                 verificationInput = waitForItem(driver, By.ID, "verification-token", timeout=5, debug=False)
                 funCaptchaInput = waitForItem(driver, By.ID, "FunCaptcha-Token", timeout=5, debug=False)
                 publicKey = GetPublicKey(verificationInput.get_attribute("value"))
+                print(' > Started solving captcha.')
                 token = CaptchaSolver(captchaUrl, publicKey)
+                print(' > Captcha solved by someone Now trying to validate it in the browser.')
                 driver.execute_script(f"arguments[0].value = '{token}';", verificationInput)
                 driver.execute_script(f"arguments[0].value = '{token}';", funCaptchaInput)
-                time.sleep(1)
+                driver.switch_to.frame(third_iframe)
+                time.sleep(2)
                 driver.execute_script('solveMeta();')
+                print(' > Just continued the validation process...')
     time.sleep(20)
     driver.save_screenshot('123.png')
     print(" > Redirecting...")
@@ -546,11 +549,9 @@ def completeRegistration(driver):
 def openTinder(driver):
     driver.execute_script("window.open('about:blank', 'tinderTab');")
     driver.switch_to.window("tinderTab")
-    driver.get("https://tinder.com")
+    driver.get("https://tinder.com?lang=en-GB")
     time.sleep(5)
-    btn = findTinderButton(driver)
-    time.sleep(2)
-    btn.click()
+    clickTinderButton(driver)
     getNumber(driver)
     completeRegistration(driver)
 
