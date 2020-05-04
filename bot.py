@@ -1,4 +1,4 @@
-import time, openpyxl, sys, requests, json, os, shutil, selenium
+import time, openpyxl, sys, requests, json, os, shutil, selenium, re
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver import ChromeOptions
@@ -6,6 +6,7 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.remote.command import Command
+from anticaptchaofficial.funcaptchaproxyless import funcaptchaProxyless
 from enum import Enum
 from mega import Mega
 import threading
@@ -22,8 +23,12 @@ globals['WorkingDir'] = os.getcwd() + "/"
 globals['OrderId'] = None
 globals['ActivationService'] = None
 globals['Images'] = []
+
 display = None
 driver = None
+
+ANTICAPTCHA = {}
+ANTICAPTCHA['Key'] = 'f101c33c0462c2ce8cb50436d9a09e6d'
 
 FIVESIMAPI = {}
 FIVESIMAPI['Key'] = "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MTYyNjUwMDksImlhdCI6MTU4NDcyOTAwOSwicmF5IjoiZDE3YzIyN2U3YmQzYTk3Y2NkODkzYWI5ZjQwODNjMGMiLCJzdWIiOjMwODU3OH0.JtyzeAzHp6xdHo2hyTGGjWDtfW-dinSlhlLf5Cvw0OcENTGZFgMiNO_CzqWZDZadJgY_uOvgpyJsa42ce_-16tHkoY3v1IeYZwaUwGTdE9UlOE94qwV9G5af3ADVMEcRgeP_Zs26vfGrKaIweMGDNub_dsD6N23anJuJzk-QFjyvnUpIdbDNOQIMWsb-q3aqtOOmYVyjre4NxDjXEYQT13Cep6ZqTcYl_NDXJjd0cpBub-EzOxcOmcbhXAq23zOf8MyaEqoe7cH2xe6QtbdUGjih1VFqed2cAKHitwou1nYaJCuDDuWPe34kgkyOoOC0MxSadzQBalJqi_wpGcKs0A"
@@ -52,6 +57,30 @@ class Columns(int):
     NAME = 6
     BIRTHDATE = 7
     TINDER_BIO = 8
+
+def CaptchaSolver(url, publicKey):
+    solver = funcaptchaProxyless()
+    solver.set_verbose(1)
+    solver.set_key("YOUR_KEY")
+    solver.set_website_url(url)
+    solver.set_website_key(publicKey)
+
+    token = solver.solve_and_return_solution()
+    if token != 0:
+        print(" > Result token: "+token)
+        return token
+    else:
+        print(" > Task finished with error "+solver.error_code)
+        custom_exit()
+
+def GetPublicKey(normal_value):
+    reCheck = r"\|pk\=(.*?)\|"
+    matches = re.findall(reCheck, normal_value)
+    if matches:
+        return matches[0]
+    else:
+        print(" > Couldn't find public Key")
+        custom_exit()
 
 def safe_json(data):
     if data is None:
@@ -128,7 +157,7 @@ def FiveSimGetCode():
 def BuyAnyActivation():
     country = ""
     requests_made = 1
-    first_api = True
+    first_api = False
     phone = None
     while not phone:
         if first_api:
@@ -151,7 +180,7 @@ def BuyAnyActivation():
                 print(f"[SmsPva #{requests_made}] > There were no free phones, retrying...")
             
         if(requests_made % 100 == 0):
-            #first_api = not first_api
+            first_api = not first_api
             curr_api = "FiveSim" if first_api else "SmsPva"
             print(f" > Switched to " + curr_api + " API")
         requests_made += 1
@@ -457,7 +486,28 @@ def completeRegistration(driver):
     if not continueBtnNew:
         continueBtnNew = waitForItem(driver, By.CSS_SELECTOR, 'button[type="submit"]', timeout=3)
     continueBtnNew.click()
-    time.sleep(30)
+    time.sleep(10)
+    first_iframe = waitForItem(driver, By.CSS_SELECTOR, 'iframe[title="arkose-enforcement"]', timeout=20, debug=False)
+    if first_iframe:
+        time.sleep(10)
+        driver.switch_to.frame(first_iframe)
+        second_iframe = waitForItem(driver, By.CSS_SELECTOR, 'iframe[data-e2e="challenge-frame"]', timeout=10, debug=False)
+        if second_iframe:
+            time.sleep(5)
+            driver.switch_to.frame(second_iframe)
+            third_iframe = waitForItem(driver, By.ID, "fc-iframe-wrap", timeout=10, debug=False)
+            if third_iframe:
+                captchaUrl = third_iframe.get_attribute("src")
+                driver.switch_to.frame(third_iframe)
+                verificationInput = waitForItem(driver, By.ID, "verification-token", timeout=5, debug=False)
+                funCaptchaInput = waitForItem(driver, By.ID, "FunCaptcha-Token", timeout=5, debug=False)
+                publicKey = GetPublicKey(verificationInput.get_attribute("value"))
+                token = CaptchaSolver(captchaUrl, publicKey)
+                driver.execute_script(f"arguments[0].value = '{token}';", verificationInput)
+                driver.execute_script(f"arguments[0].value = '{token}';", funCaptchaInput)
+                time.sleep(1)
+                driver.execute_script('solveMeta();')
+    time.sleep(20)
     driver.save_screenshot('123.png')
     print(" > Redirecting...")
     driver.get("https://tinder.com/app/profile/edit")
@@ -497,8 +547,9 @@ def openTinder(driver):
     driver.execute_script("window.open('about:blank', 'tinderTab');")
     driver.switch_to.window("tinderTab")
     driver.get("https://tinder.com")
-    time.sleep(4)
+    time.sleep(5)
     btn = findTinderButton(driver)
+    time.sleep(2)
     btn.click()
     getNumber(driver)
     completeRegistration(driver)
@@ -577,13 +628,13 @@ def main(args):
     adjustCoords()
     downloadMegaImages()
     fillImages(globals['AccountId'])
-    display = createDisplay()
+    # display = createDisplay()
     driver = createDriver()
     openTinder(driver)
     time.sleep(180)
     driver.save_screenshot(f"final_{args[1]}.png")
     driver.quit()
-    display.stop()
+    # display.stop()
     print(" > JOB DONE. GOODBYE, WORLD!")
 
 main(sys.argv)
