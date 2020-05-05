@@ -30,7 +30,6 @@ manifest_json = """
 }
 """
 
-
 background_js = """
 var config = {
         mode: "fixed_servers",
@@ -66,12 +65,10 @@ def sleep(n):
     for _ in range(1, n+1):
         time.sleep(1)
 
-PROXY = '212.107.254.193:8080'
 capa = DesiredCapabilities.CHROME
 capa["pageLoadStrategy"] = "none"
 chrome_options = ChromeOptions()
 chrome_options.add_argument("--start-maximized")
-chrome_options.add_argument('--proxy-server=%s' % PROXY)
 chrome_options.add_experimental_option("excludeSwitches", ['enable-automation'])
 chrome_options.add_experimental_option("useAutomationExtension", False)
 pluginfile = 'proxy_auth_plugin.zip'
