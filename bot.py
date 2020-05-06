@@ -507,7 +507,7 @@ def completeRegistration(driver):
                 driver.execute_script(f"arguments[0].value = '{token}';", verificationInput)
                 driver.execute_script(f"arguments[0].value = '{token}';", funCaptchaInput)
                 driver.switch_to.frame(third_iframe)
-                time.sleep(2)
+                time.sleep(1)
                 driver.execute_script('solveMeta();')
                 print(' > Just continued the validation process...')
     time.sleep(20)
@@ -519,7 +519,7 @@ def completeRegistration(driver):
     if coordBtn:
         coordBtn.click()
     else:
-        print(" > Captcha required. Exitting...")
+        print(" > Captcha hasn't been solved properly. Exitting...")
         custom_exit()
     time.sleep(0.1)
     notBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div/div/div[3]/button[2]", timeout=1)
