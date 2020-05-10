@@ -2,3 +2,4 @@ accounts/*
 debug.log
 accounts
 chromedriver.exe
+settings.json

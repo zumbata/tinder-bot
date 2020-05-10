@@ -73,13 +73,15 @@ def CaptchaSolver(url, publicKey):
         print(" > Task finished with error "+solver.error_code)
         custom_exit()
 
-def GetPublicKey(normal_value):
-    reCheck = r"\|pk\=(.*?)\|"
-    matches = re.findall(reCheck, normal_value)
+def GetPublicKey():
+    reCheck = r"([0-9a-zA-Z]{8}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{12})"
+    matches = re.findall(reCheck, driver.page_source)
     if matches:
-        return matches[0]
+        pk = matches[0]
+        print(f" > Found public key: {pk}")
+        return pk
     else:
-        print(" > Couldn't find public Key")
+        print(" > Couldn't find public key.")
         custom_exit()
 
 def safe_json(data):
@@ -157,7 +159,7 @@ def FiveSimGetCode():
 def BuyAnyActivation():
     country = ""
     requests_made = 1
-    first_api = True
+    first_api = False
     phone = None
     while not phone:
         if first_api:
@@ -325,6 +327,7 @@ def createDriver():
     # chrome_options.add_argument("--disable-gpu")
     chrome_options.add_argument('--disable-dev-shm-usage')
     # chrome_options.add_argument("--headless")
+    # chrome_options.add_argument('--proxy-server=132.145.89.166:3128')
     chrome_options.add_argument("window-size=1920,1080")
     chrome_options.add_experimental_option('prefs', {
     'geolocation': True
@@ -354,6 +357,7 @@ def clickTinderButton(driver):
     if btn == None:
         print(" > Tinder Login Button wasn't found. Exitting....")
         custom_exit()
+    print(btn)
     driver.execute_script("arguments[0].click();", btn)
 
 def fixNumber(phoneNum, country):
@@ -382,7 +386,8 @@ def fixBirthDate(date):
     return month, day, year
 
 def searchNoThxBtn(driver):
-    noThxBtn = waitForItem(driver, By.XPATH, "//a[contains(text(),'No Thanks')]", timeout=2, debug=False)
+    # noThxBtn = waitForItem(driver, By.XPATH, "//a[contains(text(),'No Thanks')]", timeout=2, debug=False)
+    noThxBtn = waitForItem(driver, By.XPATH, '/html/body/div[2]/div/div/div[2]/button[2]', timeout=2, debug=False)
     if noThxBtn:
         print(" > Found 'No Thanks' button, clicking...")
         noThxBtn.click()     
@@ -432,11 +437,18 @@ def getNumber(driver):
     continueBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[1]/button")
     continueBtn.click()
 
+def CheckBan(step):
+    reason = "email" if step == "email" else "phone"
+    if driver.current_url == "https://tinder.com/app/banned" or "Your Account Has Been Banned" in driver.find_element_by_tag_name('body').text:
+        print(f" > Account got banned because of bad {reason}.")
+        custom_exit()
+
+def CheckCaptcha():
+    return driver.current_url == "https://tinder.com/app/verify/onboarding"
+
 def completeRegistration(driver):
     time.sleep(1)
-    if "Your Account Has Been Banned" in driver.find_element_by_tag_name('body').text:
-        print(" > Account got banned because of already used or bad phone.")
-        custom_exit()
+    CheckBan("phone")
     driver.save_screenshot("567.png")
     emailInput = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[1]/div[2]/input", timeout=15)
     if emailInput:
@@ -449,9 +461,7 @@ def completeRegistration(driver):
     continueBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[1]/div[2]/button")
     continueBtn.click()
     time.sleep(2)
-    if "Your Account Has Been Banned" in driver.find_element_by_tag_name('body').text:
-        print(" > Account got banned because of already used email.")
-        custom_exit()
+    CheckBan("email")
     cookieBtn = waitForItem(driver, By.XPATH, "/html/body/div[1]/div/div[2]/div/div/div[1]/button")
     if cookieBtn:
         cookieBtn.click()
@@ -481,36 +491,49 @@ def completeRegistration(driver):
     time.sleep(3)
     chooseBtn = waitForItem(driver, By.XPATH, "/html/body/div[2]/div/div/div[1]/div[1]/button[2]")
     chooseBtn.click()
-    time.sleep(3)
+    time.sleep(10)
     continueBtnNew = waitForItem(driver, By.XPATH, "/html/body/div[1]/div/div[1]/div/main/div[1]/div/div/div/form/div[7]/button", timeout=3)
     if not continueBtnNew:
         continueBtnNew = waitForItem(driver, By.CSS_SELECTOR, 'button[type="submit"]', timeout=3)
     continueBtnNew.click()
     time.sleep(10)
-    first_iframe = waitForItem(driver, By.CSS_SELECTOR, 'iframe[title="arkose-enforcement"]', timeout=20, debug=False)
-    if first_iframe:
-        time.sleep(10)
-        driver.switch_to.frame(first_iframe)
-        second_iframe = waitForItem(driver, By.CSS_SELECTOR, 'iframe[data-e2e="challenge-frame"]', timeout=10, debug=False)
-        if second_iframe:
-            time.sleep(5)
-            driver.switch_to.frame(second_iframe)
-            third_iframe = waitForItem(driver, By.ID, "fc-iframe-wrap", timeout=10, debug=False)
-            if third_iframe:
-                captchaUrl = third_iframe.get_attribute("src")
-                verificationInput = waitForItem(driver, By.ID, "verification-token", timeout=5, debug=False)
-                funCaptchaInput = waitForItem(driver, By.ID, "FunCaptcha-Token", timeout=5, debug=False)
-                publicKey = GetPublicKey(verificationInput.get_attribute("value"))
-                print(' > Started solving captcha.')
-                token = CaptchaSolver(captchaUrl, publicKey)
-                print(' > Captcha solved by someone. Now trying to validate it in the browser.')
-                driver.execute_script(f"arguments[0].value = '{token}';", verificationInput)
-                driver.execute_script(f"arguments[0].value = '{token}';", funCaptchaInput)
-                driver.switch_to.frame(third_iframe)
-                time.sleep(1)
-                driver.execute_script('solveMeta();')
-                print(' > Just continued the validation process...')
-    time.sleep(20)
+    if CheckCaptcha():
+        time.sleep(20)
+        first_iframe = waitForItem(driver, By.CSS_SELECTOR, 'iframe[title="arkose-enforcement"]', timeout=20, debug=False)
+        if first_iframe:
+            time.sleep(10)
+            driver.switch_to.frame(first_iframe)
+            second_iframe = waitForItem(driver, By.CSS_SELECTOR, 'iframe[data-e2e="challenge-frame"]', timeout=10, debug=False)
+            if second_iframe:
+                time.sleep(5)
+                driver.switch_to.frame(second_iframe)
+                third_iframe = waitForItem(driver, By.ID, "fc-iframe-wrap", timeout=10, debug=False)
+                if third_iframe:
+                    captchaUrl = third_iframe.get_attribute("src")
+                    verificationInput = waitForItem(driver, By.ID, "verification-token", timeout=5, debug=False)
+                    funCaptchaInput = waitForItem(driver, By.ID, "FunCaptcha-Token", timeout=5, debug=False)
+                    publicKey = GetPublicKey()
+                    print(' > Started solving captcha.')
+                    token = CaptchaSolver(captchaUrl, publicKey)
+                    print(' > Captcha solved by someone. Now trying to validate it in the browser.')
+                    driver.execute_script(f"arguments[0].setAttribute('value', '{token}');", verificationInput)
+                    driver.execute_script(f"arguments[0].setAttribute('value', '{token}');", funCaptchaInput)
+                    driver.switch_to.frame(third_iframe)
+                    time.sleep(1)
+                    try:
+                        driver.execute_script('solveMeta();')
+                        print(" > Captcha is JavaScript.")
+                    except:
+                        print(" > Captcha is not JavaScript.")
+                        funCaptchaInput = waitForItem(driver, By.NAME, "fc-token", timeout=5, debug=False)
+                        tokenSplit = token.split('|')
+                        newToken = tokenSplit[0] + '|' + tokenSplit[1]
+                        driver.execute_script(f"arguments[0].setAttribute('value', '{newToken}');", funCaptchaInput)
+                        driver.execute_script("$('form').submit()")
+                    print(' > Just continued the validation process...')
+    else:
+        time.sleep(5)
+    time.sleep(10)
     driver.save_screenshot('123.png')
     print(" > Redirecting...")
     driver.get("https://tinder.com/app/profile/edit")
@@ -629,13 +652,15 @@ def main(args):
     adjustCoords()
     downloadMegaImages()
     fillImages(globals['AccountId'])
-    # display = createDisplay()
+    display = createDisplay()
     driver = createDriver()
     openTinder(driver)
     time.sleep(180)
+    driver.refresh()
+    time.sleep(7)
     driver.save_screenshot(f"final_{args[1]}.png")
     driver.quit()
-    # display.stop()
+    display.stop()
     print(" > JOB DONE. GOODBYE, WORLD!")
 
 main(sys.argv)
