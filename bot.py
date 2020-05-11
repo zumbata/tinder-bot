@@ -159,7 +159,7 @@ def FiveSimGetCode():
 def BuyAnyActivation():
     country = ""
     requests_made = 1
-    first_api = False
+    first_api = True
     phone = None
     while not phone:
         if first_api:
@@ -519,7 +519,7 @@ def completeRegistration(driver):
                     driver.execute_script(f"arguments[0].setAttribute('value', '{token}');", verificationInput)
                     driver.execute_script(f"arguments[0].setAttribute('value', '{token}');", funCaptchaInput)
                     driver.switch_to.frame(third_iframe)
-                    time.sleep(1)
+                    time.sleep(5)
                     try:
                         driver.execute_script('solveMeta();')
                         print(" > Captcha is JavaScript.")
@@ -652,7 +652,7 @@ def main(args):
     adjustCoords()
     downloadMegaImages()
     fillImages(globals['AccountId'])
-    display = createDisplay()
+    #display = createDisplay()
     driver = createDriver()
     openTinder(driver)
     time.sleep(180)
@@ -660,7 +660,7 @@ def main(args):
     time.sleep(7)
     driver.save_screenshot(f"final_{args[1]}.png")
     driver.quit()
-    display.stop()
+    #display.stop()
     print(" > JOB DONE. GOODBYE, WORLD!")
 
 main(sys.argv)
