@@ -353,9 +353,10 @@ def createDriver():
 
 def clickTinderButton(driver):
     try:
-        driver.execute_script("$(\"[aria-label='Log in with phone number']\").click()")
-    except:
+        driver.execute_script("document.querySelector(\"button[aria-label='Log in with phone number']\").click()")
+    except Exception as e:
         print(" > Can't find Log in button.")
+        print(str(e))
         custom_exit()
     #### OLD #### 
 
