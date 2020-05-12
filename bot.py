@@ -352,13 +352,20 @@ def createDriver():
     return driver
 
 def clickTinderButton(driver):
-    selector = "[aria-label='Log in with phone number']"
-    btn = waitForItem(driver, By.CSS_SELECTOR, selector)
-    if btn == None:
-        print(" > Tinder Login Button wasn't found. Exitting....")
+    try:
+        driver.execute_script("$(\"[aria-label='Log in with phone number']\").click()")
+    except:
+        print(" > Can't find Log in button.")
         custom_exit()
-    print(btn)
-    driver.execute_script("arguments[0].click();", btn)
+    #### OLD #### 
+
+    #selector = "[aria-label='Log in with phone number']"
+    #btn = waitForItem(driver, By.CSS_SELECTOR, selector)
+    #if not btn:
+    #     print(" > Tinder Login Button wasn't found. Exitting....")
+    #     custom_exit()
+    # print(btn)
+    # driver.execute_script("arguments[0].click();", btn)
 
 def fixNumber(phoneNum, country):
     phoneNum = phoneNum[1:]
